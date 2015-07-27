@@ -1,7 +1,9 @@
 package validation
 
 import (
+	"regexp"
 	"strconv"
+	"strings"
 )
 
 type maxLengthValidation struct {
@@ -12,6 +14,12 @@ type maxLengthValidation struct {
 type minLengthValidation struct {
 	Validation
 	length int
+}
+
+type formatValidation struct {
+	Validation
+	pattern     *regexp.Regexp
+	patternName string
 }
 
 func newMaxLengthValidation(options string) (Interface, error) {
@@ -74,7 +82,40 @@ func (v *minLengthValidation) Validate(value interface{}) *ValidationError {
 	return nil
 }
 
+var emailRexep = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+
+func newFormatValidation(options string) (Interface, error) {
+	if strings.ToLower(options) == "email" {
+		return &formatValidation{
+			pattern:     emailRexep,
+			patternName: "email",
+		}, nil
+	}
+
+	return nil, &ValidationError{Key: "format", Message: "Has no pattern " + options}
+}
+
+func (v *formatValidation) Validate(value interface{}) *ValidationError {
+	strValue, ok := value.(string)
+	if !ok {
+		return &ValidationError{
+			Key:     v.FieldName(),
+			Message: "is not of type string. FormatValidation only accepts strings",
+		}
+	}
+
+	if !v.pattern.MatchString(strValue) {
+		return &ValidationError{
+			Key:     v.FieldName(),
+			Message: "does not match " + v.patternName + " format",
+		}
+	}
+
+	return nil
+}
+
 func init() {
 	AddValidation("max_length", newMaxLengthValidation)
 	AddValidation("min_length", newMinLengthValidation)
+	AddValidation("format", newFormatValidation)
 }

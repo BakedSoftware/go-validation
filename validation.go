@@ -52,7 +52,7 @@ func (v *Validation) FieldName() string {
 func (v *Validation) Validate(value interface{}) *ValidationError {
 	return &ValidationError{
 		Key:     v.fieldName,
-		Message: "Unknown Validation: '" + v.Name + "'",
+		Message: "Validation not implemented",
 	}
 }
 

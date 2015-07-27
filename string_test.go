@@ -11,6 +11,10 @@ type LengthTestStruct struct {
 	Title      string `validation:"min_length=3 max_length=5"`
 }
 
+type FormatTestStruct struct {
+	Email string `validation:"format=email"`
+}
+
 func TestMaxLengthValid(t *testing.T) {
 	object := LengthTestStruct{
 		LongTitle:  "123",
@@ -117,10 +121,52 @@ func TestLengthInvalid(t *testing.T) {
 	}
 }
 
+func TestEmail(t *testing.T) {
+	object := FormatTestStruct{
+		Email: "",
+	}
+
+	ok, _ := IsValid(object)
+
+	if ok {
+		t.Fatal("Empty email should be invalid")
+	}
+
+	object.Email = "123"
+
+	ok, _ = IsValid(object)
+
+	if ok {
+		t.Fatalf("Invalid email (%s) should be invalid", object.Email)
+	}
+
+	object.Email = "test@example.com"
+
+	ok, errs := IsValid(object)
+
+	if !ok {
+		t.Log(errs)
+		t.Fatalf("Valid email (%s) should be valid", object.Email)
+	}
+
+}
+
 func ExampleIsValid_stringlength() {
 	type Person struct {
 		// Name must be between 1 and 5 characters inclusive
 		Name string `validation:"min_length=1 max_length=5"`
+	}
+
+	var p Person
+
+	ok, errs := IsValid(p)
+	fmt.Println(ok, errs)
+}
+
+func ExampleIsValid_format() {
+	type Person struct {
+		// Email must be valid email
+		Email string `validation:"format=email"`
 	}
 
 	var p Person
