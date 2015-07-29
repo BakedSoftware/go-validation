@@ -87,24 +87,26 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 		for i := objectType.NumField() - 1; i >= 0; i-- {
 			field := objectType.Field(i)
 			validationTag := field.Tag.Get("validation")
-			validationComps := strings.Split(validationTag, " ")
-			for _, v := range validationComps {
-				comps := strings.Split(v, "=")
-				if len(comps) != 2 {
-					log.Fatalln("Invalid Validation Specification:", objectType.Name(), field.Name, v)
+			if len(validationTag) > 0 {
+				validationComps := strings.Split(validationTag, " ")
+				for _, v := range validationComps {
+					comps := strings.Split(v, "=")
+					if len(comps) != 2 {
+						log.Fatalln("Invalid Validation Specification:", objectType.Name(), field.Name, v)
+					}
+					var validation Interface
+					if builder := validationNameToBuilder[comps[0]]; builder != nil {
+						validation, err = builder(comps[1])
+					} else {
+						log.Fatalln("Unknown validation named", comps[0])
+					}
+					if err != nil {
+						log.Fatalln("Error Creating Validation", objectType.Name(), field.Name, v, err)
+					}
+					validation.SetFieldName(field.Name)
+					validation.SetFieldIndex(i)
+					validations = append(validations, validation)
 				}
-				var validation Interface
-				if builder := validationNameToBuilder[comps[0]]; builder != nil {
-					validation, err = builder(comps[1])
-				} else {
-					log.Fatalln("Unknown validation named", comps[0])
-				}
-				if err != nil {
-					log.Fatalln("Error Creating Validation", objectType.Name(), field.Name, v, err)
-				}
-				validation.SetFieldName(field.Name)
-				validation.SetFieldIndex(i)
-				validations = append(validations, validation)
 			}
 		}
 		validationMap[objectType] = validations
