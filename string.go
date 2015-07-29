@@ -82,7 +82,7 @@ func (v *minLengthValidation) Validate(value interface{}) *ValidationError {
 	return nil
 }
 
-var emailRexep = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+var emailRexep = regexp.MustCompile(`(?i)^[a-z0-9\._%+\-]+@[a-z0-9\.\-]+\.[a-z]{2,4}$`)
 
 func newFormatValidation(options string) (Interface, error) {
 	if strings.ToLower(options) == "email" {

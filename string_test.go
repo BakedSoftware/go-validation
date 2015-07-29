@@ -149,6 +149,15 @@ func TestEmail(t *testing.T) {
 		t.Fatalf("Valid email (%s) should be valid", object.Email)
 	}
 
+	object.Email = "BaseMail0@Base.com"
+
+	ok, errs = IsValid(object)
+
+	if !ok {
+		t.Log(errs)
+		t.Fatalf("Valid email with a number(%s) should be valid", object.Email)
+	}
+
 }
 
 func ExampleIsValid_stringlength() {
