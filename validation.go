@@ -15,7 +15,7 @@ type Interface interface {
 	FieldIndex() int
 	SetFieldName(name string)
 	FieldName() string
-	Validate(value interface{}, obj interface{}) *ValidationError
+	Validate(value interface{}, obj reflect.Value) *ValidationError
 }
 
 // Validation is an implementation of a Interface and can be used to
