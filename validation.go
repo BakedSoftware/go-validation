@@ -15,7 +15,7 @@ type Interface interface {
 	FieldIndex() int
 	SetFieldName(name string)
 	FieldName() string
-	Validate(value interface{}) *ValidationError
+	Validate(value interface{}, obj interface{}) *ValidationError
 }
 
 // Validation is an implementation of a Interface and can be used to
@@ -49,7 +49,7 @@ func (v *Validation) FieldName() string {
 }
 
 // Validate determines if the value is valid. Nil is returned if it is valid
-func (v *Validation) Validate(value interface{}) *ValidationError {
+func (v *Validation) Validate(value interface{}, obj interface{}) *ValidationError {
 	return &ValidationError{
 		Key:     v.fieldName,
 		Message: "Validation not implemented",
@@ -116,7 +116,7 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 	for _, validation := range validations {
 		field := objectValue.Field(validation.FieldIndex())
 		value := field.Interface()
-		if err := validation.Validate(value); err != nil {
+		if err := validation.Validate(value, objectValue); err != nil {
 			errors = append(errors, *err)
 		}
 	}

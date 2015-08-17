@@ -33,7 +33,7 @@ func newMaxLengthValidation(options string) (Interface, error) {
 	}, nil
 }
 
-func (v *maxLengthValidation) Validate(value interface{}) *ValidationError {
+func (v *maxLengthValidation) Validate(value interface{}, obj interface{}) *ValidationError {
 	strValue, ok := value.(string)
 	if !ok {
 		return &ValidationError{
@@ -63,7 +63,7 @@ func newMinLengthValidation(options string) (Interface, error) {
 	}, nil
 }
 
-func (v *minLengthValidation) Validate(value interface{}) *ValidationError {
+func (v *minLengthValidation) Validate(value interface{}, obj interface{}) *ValidationError {
 	strValue, ok := value.(string)
 	if !ok {
 		return &ValidationError{
@@ -95,7 +95,7 @@ func newFormatValidation(options string) (Interface, error) {
 	return nil, &ValidationError{Key: "format", Message: "Has no pattern " + options}
 }
 
-func (v *formatValidation) Validate(value interface{}) *ValidationError {
+func (v *formatValidation) Validate(value interface{}, obj interface{}) *ValidationError {
 	strValue, ok := value.(string)
 	if !ok {
 		return &ValidationError{
