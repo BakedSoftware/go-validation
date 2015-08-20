@@ -12,7 +12,8 @@ type LengthTestStruct struct {
 }
 
 type FormatTestStruct struct {
-	Email string `validation:"format=email"`
+	Email  string `validation:"format=email"`
+	Regexp string `validation:"format=regexp:Test[0-9]+"`
 }
 
 func TestMaxLengthValid(t *testing.T) {
@@ -123,7 +124,8 @@ func TestLengthInvalid(t *testing.T) {
 
 func TestEmail(t *testing.T) {
 	object := FormatTestStruct{
-		Email: "",
+		Email:  "",
+		Regexp: "Test123",
 	}
 
 	ok, _ := IsValid(object)
@@ -158,6 +160,36 @@ func TestEmail(t *testing.T) {
 		t.Fatalf("Valid email with a number(%s) should be valid", object.Email)
 	}
 
+}
+
+func TestRegexp(t *testing.T) {
+	object := FormatTestStruct{
+		Regexp: "",
+		Email:  "valid@example.com",
+	}
+
+	ok, _ := IsValid(object)
+
+	if ok {
+		t.Fatal("Empty regexp should be invalid")
+	}
+
+	object.Regexp = "invalid"
+
+	ok, _ = IsValid(object)
+
+	if ok {
+		t.Fatalf("Invalid regexp (%s) should be invalid", object.Regexp)
+	}
+
+	object.Regexp = "Test123"
+
+	ok, errs := IsValid(object)
+
+	if !ok {
+		t.Log(errs)
+		t.Fatalf("Valid regexp (%s) should be valid", object.Regexp)
+	}
 }
 
 func ExampleIsValid_stringlength() {

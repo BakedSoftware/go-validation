@@ -91,6 +91,18 @@ func newFormatValidation(options string) (Interface, error) {
 			pattern:     emailRexep,
 			patternName: "email",
 		}, nil
+	} else if strings.Contains(options, "regexp:") {
+		patternStr := options[strings.Index(options, ":")+1:]
+		pattern, err := regexp.Compile(patternStr)
+
+		if err != nil {
+			return nil, &ValidationError{Key: "regexp:", Message: err.Error()}
+		}
+
+		return &formatValidation{
+			pattern:     pattern,
+			patternName: "regexp",
+		}, nil
 	}
 
 	return nil, &ValidationError{Key: "format", Message: "Has no pattern " + options}
