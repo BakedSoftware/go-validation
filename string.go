@@ -23,7 +23,7 @@ type formatValidation struct {
 	patternName string
 }
 
-func newMaxLengthValidation(options string) (Interface, error) {
+func newMaxLengthValidation(options string, kind reflect.Kind) (Interface, error) {
 	length, err := strconv.ParseInt(options, 10, 0)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (v *maxLengthValidation) Validate(value interface{}, obj reflect.Value) *Va
 	return nil
 }
 
-func newMinLengthValidation(options string) (Interface, error) {
+func newMinLengthValidation(options string, kind reflect.Kind) (Interface, error) {
 	length, err := strconv.ParseInt(options, 10, 0)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (v *minLengthValidation) Validate(value interface{}, obj reflect.Value) *Va
 
 var emailRexep = regexp.MustCompile(`(?i)^[a-z0-9\._%+\-]+@[a-z0-9\.\-]+\.[a-z]{2,4}$`)
 
-func newFormatValidation(options string) (Interface, error) {
+func newFormatValidation(options string, kind reflect.Kind) (Interface, error) {
 	if strings.ToLower(options) == "email" {
 		return &formatValidation{
 			pattern:     emailRexep,

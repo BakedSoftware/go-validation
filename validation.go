@@ -49,7 +49,7 @@ func (v *Validation) FieldName() string {
 }
 
 // Validate determines if the value is valid. Nil is returned if it is valid
-func (v *Validation) Validate(value interface{}, obj interface{}) *ValidationError {
+func (v *Validation) Validate(value interface{}, obj reflect.Value) *ValidationError {
 	return &ValidationError{
 		Key:     v.fieldName,
 		Message: "Validation not implemented",
@@ -57,11 +57,11 @@ func (v *Validation) Validate(value interface{}, obj interface{}) *ValidationErr
 }
 
 var validationMap map[reflect.Type][]Interface
-var validationNameToBuilder map[string]func(string) (Interface, error)
+var validationNameToBuilder map[string]func(string, reflect.Kind) (Interface, error)
 
 func prepareMap() {
 	if validationNameToBuilder == nil {
-		validationNameToBuilder = make(map[string]func(string) (Interface, error))
+		validationNameToBuilder = make(map[string]func(string, reflect.Kind) (Interface, error))
 	}
 }
 
@@ -72,7 +72,7 @@ func init() {
 // AddValidation registers the validation specified by key to the known
 // validations. If more than one validation registers with the same key, the
 // last one will become the validation for that key
-func AddValidation(key string, fn func(string) (Interface, error)) {
+func AddValidation(key string, fn func(string, reflect.Kind) (Interface, error)) {
 	prepareMap()
 	validationNameToBuilder[key] = fn
 }
@@ -96,7 +96,7 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 					}
 					var validation Interface
 					if builder := validationNameToBuilder[comps[0]]; builder != nil {
-						validation, err = builder(comps[1])
+						validation, err = builder(comps[1], field.Type.Kind())
 					} else {
 						log.Fatalln("Unknown validation named", comps[0])
 					}
