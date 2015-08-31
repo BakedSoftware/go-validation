@@ -1,0 +1,4 @@
+image: 1.4.2
+job:
+  script: "go test ./..."
+  only: ["master"]
