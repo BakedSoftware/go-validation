@@ -323,7 +323,7 @@ func TestMaxValueInt8Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Empty Int8(0) should be invalid (>= -20)")
 	}
 
@@ -345,7 +345,7 @@ func TestMaxValueInt16Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Empty Int16(0) should be invalid (>= -20)")
 	}
 
@@ -367,7 +367,7 @@ func TestMaxValueInt32Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Empty Int32(0) should be invalid (>= -20)")
 	}
 
@@ -388,7 +388,7 @@ func TestMaxValueInt64Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Empty Int64(0) should be invalid (>= -20)")
 	}
 
@@ -409,7 +409,7 @@ func TestMaxValueIntNegative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Empty Int(0) should be invalid (>= -20)")
 	}
 
@@ -431,15 +431,15 @@ func TestMaxValueUint8Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if ok {
-		t.Fatal("Expected failure as 0 is less than max 20")
+	if !ok {
+		t.Fatal("Expected success as 0 is less than max 20")
 	}
 
 	obj.Value = 40
 
 	ok, errs := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Valid: 40 is greater than 20", errs)
 	}
 }
@@ -452,15 +452,15 @@ func TestMaxValueUint16Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if ok {
-		t.Fatal("Expected failure as 0 is less than max 20")
+	if !ok {
+		t.Fatal("Expected success as 0 is less than max 20")
 	}
 
 	obj.Value = 40
 
 	ok, errs := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Valid: 40 is greater than 20", errs)
 	}
 }
@@ -473,15 +473,15 @@ func TestMaxValueUint32Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if ok {
-		t.Fatal("Expected failure as 0 is less than max 20")
+	if !ok {
+		t.Fatal("Expected success as 0 is less than max 20")
 	}
 
 	obj.Value = 40
 
 	ok, errs := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Valid: 40 is greater than 20", errs)
 	}
 }
@@ -494,15 +494,15 @@ func TestMaxValueUint64Negative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if ok {
-		t.Fatal("Expected failure as 0 is less than max 20")
+	if !ok {
+		t.Fatal("Expected success as 0 is less than max 20")
 	}
 
 	obj.Value = 40
 
 	ok, errs := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Valid: 40 is greater than 20", errs)
 	}
 }
@@ -515,15 +515,15 @@ func TestMaxValueUintNegative(t *testing.T) {
 
 	ok, _ := IsValid(obj)
 
-	if ok {
-		t.Fatal("Expected failure as 0 is less than max 20")
+	if !ok {
+		t.Fatal("Expected success as 0 is less than max 20")
 	}
 
 	obj.Value = 40
 
 	ok, errs := IsValid(obj)
 
-	if !ok {
+	if ok {
 		t.Fatal("Valid: 40 is greater than 20", errs)
 	}
 }
