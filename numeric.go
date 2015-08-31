@@ -95,6 +95,45 @@ func (m *uintValueValidation) Validate(value interface{}, obj reflect.Value) *Va
 	return nil
 }
 
+type floatValueValidation struct {
+	Validation
+	value float64
+	less  bool
+}
+
+func (m *floatValueValidation) Validate(value interface{}, obj reflect.Value) *ValidationError {
+	var compareValue float64
+	switch value := value.(type) {
+	case float32:
+		compareValue = float64(value)
+	case float64:
+		compareValue = float64(value)
+	default:
+		return &ValidationError{
+			Key:     m.FieldName(),
+			Message: "is not convertible to type float64",
+		}
+	}
+
+	if m.less {
+		if compareValue < m.value {
+			return &ValidationError{
+				Key:     m.FieldName(),
+				Message: "must be greater than " + strconv.FormatFloat(m.value, 'E', -1, 64),
+			}
+		}
+	} else {
+		if compareValue > m.value {
+			return &ValidationError{
+				Key:     m.FieldName(),
+				Message: "must be less than " + strconv.FormatFloat(m.value, 'E', -1, 64),
+			}
+		}
+	}
+
+	return nil
+}
+
 func newMinValueValidation(options string, kind reflect.Kind) (Interface, error) {
 	switch kind {
 	case reflect.Int:
@@ -128,6 +167,17 @@ func newMinValueValidation(options string, kind reflect.Kind) (Interface, error)
 			return nil, err
 		}
 		return &uintValueValidation{
+			value: value,
+			less:  true,
+		}, nil
+	case reflect.Float32:
+		fallthrough
+	case reflect.Float64:
+		value, err := strconv.ParseFloat(options, 64)
+		if err != nil {
+			return nil, err
+		}
+		return &floatValueValidation{
 			value: value,
 			less:  true,
 		}, nil
@@ -172,6 +222,17 @@ func newMaxValueValidation(options string, kind reflect.Kind) (Interface, error)
 			return nil, err
 		}
 		return &uintValueValidation{
+			value: value,
+			less:  false,
+		}, nil
+	case reflect.Float32:
+		fallthrough
+	case reflect.Float64:
+		value, err := strconv.ParseFloat(options, 64)
+		if err != nil {
+			return nil, err
+		}
+		return &floatValueValidation{
 			value: value,
 			less:  false,
 		}, nil

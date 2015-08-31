@@ -13,6 +13,10 @@ type minValueTestType struct {
 	Uint64 uint64 `validation:min=20`
 	Int    int    `validation:min=-20`
 	Uint   uint   `validation:min=20`
+
+	// Floats
+	Float32 float32 `validation:"min=-20"`
+	Float64 float64 `validation:"min=-20"`
 }
 
 func TestMinValueInt8Negative(t *testing.T) {
@@ -266,6 +270,50 @@ func TestMinValueUintNegative(t *testing.T) {
 	}
 }
 
+// Floats
+
+func TestMinValueFloat32(t *testing.T) {
+	type minValueTestType struct {
+		Value float32 `validation:"min=20"`
+	}
+	obj := minValueTestType{}
+
+	ok, _ := IsValid(obj)
+
+	if ok {
+		t.Fatal("Expected failure as 0 is less than min 20")
+	}
+
+	obj.Value = 40
+
+	ok, errs := IsValid(obj)
+
+	if !ok {
+		t.Fatal("Valid: 40 is greater than 20", errs)
+	}
+}
+
+func TestMinValueFloat64(t *testing.T) {
+	type minValueTestType struct {
+		Value float64 `validation:"min=20"`
+	}
+	obj := minValueTestType{}
+
+	ok, _ := IsValid(obj)
+
+	if ok {
+		t.Fatal("Expected failure as 0 is less than min 20")
+	}
+
+	obj.Value = 40
+
+	ok, errs := IsValid(obj)
+
+	if !ok {
+		t.Fatal("Valid: 40 is greater than 20", errs)
+	}
+}
+
 // Max Value
 func TestMaxValueInt8Negative(t *testing.T) {
 	type maxValueTestType struct {
@@ -472,6 +520,50 @@ func TestMaxValueUintNegative(t *testing.T) {
 	}
 
 	obj.Value = 40
+
+	ok, errs := IsValid(obj)
+
+	if !ok {
+		t.Fatal("Valid: 40 is greater than 20", errs)
+	}
+}
+
+// Floats
+
+func TestMaxValueFloat32(t *testing.T) {
+	type maxValueTestType struct {
+		Value float32 `validation:"max=-20"`
+	}
+	obj := maxValueTestType{}
+
+	ok, _ := IsValid(obj)
+
+	if ok {
+		t.Fatal("Expected failure as 0 is less than max -20")
+	}
+
+	obj.Value = -40
+
+	ok, errs := IsValid(obj)
+
+	if !ok {
+		t.Fatal("Valid: 40 is greater than 20", errs)
+	}
+}
+
+func TestMaxValueFloat64(t *testing.T) {
+	type maxValueTestType struct {
+		Value float64 `validation:"max=-20"`
+	}
+	obj := maxValueTestType{}
+
+	ok, _ := IsValid(obj)
+
+	if ok {
+		t.Fatal("Expected failure as 0 is less than max -20")
+	}
+
+	obj.Value = -40
 
 	ok, errs := IsValid(obj)
 
