@@ -1,4 +1,4 @@
-# go-validation [![Build Status](https://drone.io/github.com/BakedSoftware/go-validation/status.png)](https://drone.io/github.com/BakedSoftware/go-validation/latest)
+# go-validation [![Build Status](https://travis-ci.org/BakedSoftware/go-validation.svg?branch=master)](https://travis-ci.org/BakedSoftware/go-validation)
 
 Provides validations for struct fields based on a validation tag
 
