@@ -82,6 +82,9 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 	objectValue := reflect.ValueOf(object)
 	objectType := reflect.TypeOf(object)
 	validations := validationMap[objectType]
+	if objectValue.Kind() == reflect.Ptr && !objectValue.IsNil() {
+		return IsValid(objectValue.Elem().Interface())
+	}
 	if len(validations) == 0 {
 		var err error
 		for i := objectType.NumField() - 1; i >= 0; i-- {
