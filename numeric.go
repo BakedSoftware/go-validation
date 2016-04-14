@@ -35,14 +35,14 @@ func (m *intValueValidation) Validate(value interface{}, obj reflect.Value) *Val
 		if compareValue < m.value {
 			return &ValidationError{
 				Key:     m.FieldName(),
-				Message: "must be greater than " + strconv.FormatInt(m.value, 10),
+				Message: "must be greater than or equal to " + strconv.FormatInt(m.value, 10),
 			}
 		}
 	} else {
 		if compareValue > m.value {
 			return &ValidationError{
 				Key:     m.FieldName(),
-				Message: "must be less than " + strconv.FormatInt(m.value, 10),
+				Message: "must be less than or equal to " + strconv.FormatInt(m.value, 10),
 			}
 		}
 	}
@@ -80,14 +80,14 @@ func (m *uintValueValidation) Validate(value interface{}, obj reflect.Value) *Va
 		if compareValue < m.value {
 			return &ValidationError{
 				Key:     m.FieldName(),
-				Message: "must be greater than " + strconv.FormatUint(m.value, 10),
+				Message: "must be greater than or equal to " + strconv.FormatUint(m.value, 10),
 			}
 		}
 	} else {
 		if compareValue > m.value {
 			return &ValidationError{
 				Key:     m.FieldName(),
-				Message: "must be less than " + strconv.FormatUint(m.value, 10),
+				Message: "must be less than or equal to " + strconv.FormatUint(m.value, 10),
 			}
 		}
 	}
@@ -119,14 +119,14 @@ func (m *floatValueValidation) Validate(value interface{}, obj reflect.Value) *V
 		if compareValue < m.value {
 			return &ValidationError{
 				Key:     m.FieldName(),
-				Message: "must be greater than " + strconv.FormatFloat(m.value, 'E', -1, 64),
+				Message: "must be greater than or equal to " + strconv.FormatFloat(m.value, 'E', -1, 64),
 			}
 		}
 	} else {
 		if compareValue > m.value {
 			return &ValidationError{
 				Key:     m.FieldName(),
-				Message: "must be less than " + strconv.FormatFloat(m.value, 'E', -1, 64),
+				Message: "must be less than or equal to " + strconv.FormatFloat(m.value, 'E', -1, 64),
 			}
 		}
 	}
