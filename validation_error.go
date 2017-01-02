@@ -14,6 +14,9 @@ func (e *ValidationError) Error() string {
 type ValidationErrors []ValidationError
 
 func (e ValidationErrors) Error() string {
+	if len(e) == 0 {
+		return "Empty validation.ValidationErrors"
+	}
 	err := e[0].Error()
 	if len(e) > 1 {
 		err += fmt.Sprintf(" and %d other errors.", len(e))
