@@ -1,5 +1,7 @@
 package validation
 
+import "fmt"
+
 type ValidationError struct {
 	Key     string
 	Message string
@@ -7,4 +9,14 @@ type ValidationError struct {
 
 func (e *ValidationError) Error() string {
 	return e.Key + " " + e.Message
+}
+
+type ValidationErrors []ValidationError
+
+func (e ValidationErrors) Error() string {
+	err := e[0].Error()
+	if len(e) > 1 {
+		err += fmt.Sprintf(" and %d other errors.", len(e))
+	}
+	return err
 }
