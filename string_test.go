@@ -160,6 +160,15 @@ func TestEmail(t *testing.T) {
 		t.Fatalf("Valid email with a number(%s) should be valid", object.Email)
 	}
 
+	object.Email = "BaseMail0@Base.consulting"
+
+	ok, errs = IsValid(object)
+
+	if !ok {
+		t.Log(errs)
+		t.Fatalf("Valid email with a new TLD(%s) should be valid", object.Email)
+	}
+
 }
 
 func TestRegexp(t *testing.T) {
