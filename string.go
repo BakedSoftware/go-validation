@@ -83,7 +83,8 @@ func (v *minLengthValidation) Validate(value interface{}, obj reflect.Value) *Va
 	return nil
 }
 
-var emailRexep = regexp.MustCompile(`(?i)^[a-z0-9\._%+\-]+@[a-z0-9\.\-]+\.[a-z]{2,}$`)
+//var emailRexep = regexp.MustCompile(`(?i)^[a-z0-9\._%+\-]+@[a-z0-9\.\-]+\.[a-z]{2,}$`)
+var emailRexep = regexp.MustCompile(`(?i)^[a-z0-9._%+\-]+@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?`)
 
 func newFormatValidation(options string, kind reflect.Kind) (Interface, error) {
 	if strings.ToLower(options) == "email" {
