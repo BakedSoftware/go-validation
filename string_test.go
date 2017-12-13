@@ -201,7 +201,7 @@ func TestRegexp(t *testing.T) {
 	}
 }
 
-func ExampleIsValid_stringlength() {
+func ExampleIsValid_StringLength() {
 	type Person struct {
 		// Name must be between 1 and 5 characters inclusive
 		Name string `validation:"min_length=1 max_length=5"`
