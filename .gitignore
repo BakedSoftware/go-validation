@@ -1,0 +1,9 @@
+# Hidden files
+.DS_Store
+*humbs.db
+
+# IDE Files
+.idea/
+.project
+/.externalToolBuilders/
+/.settings/
