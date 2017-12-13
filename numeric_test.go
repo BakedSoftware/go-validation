@@ -4,21 +4,22 @@ import "testing"
 
 type minValueTestType struct {
 	Int8   int8   `validation:"min=-20"`
-	Uint8  uint8  `validation:min=20`
+	Uint8  uint8  `validation:"min=20"`
 	Int16  int16  `validation:"min=-20"`
-	Uint16 uint16 `validation:min=20`
+	Uint16 uint16 `validation:"min=20"`
 	Int32  int32  `validation:"min=-20"`
-	Uint32 uint32 `validation:min=20`
-	Int64  int64  `validation:min=-20`
-	Uint64 uint64 `validation:min=20`
-	Int    int    `validation:min=-20`
-	Uint   uint   `validation:min=20`
+	Uint32 uint32 `validation:"min=20"`
+	Int64  int64  `validation:"min=-20"`
+	Uint64 uint64 `validation:"min=20"`
+	Int    int    `validation:"min=-20"`
+	Uint   uint   `validation:"min=20"`
 
 	// Floats
 	Float32 float32 `validation:"min=-20"`
 	Float64 float64 `validation:"min=-20"`
 }
 
+// Int tests
 func TestMinValueInt8Negative(t *testing.T) {
 	type minValueTestType struct {
 		Value int8 `validation:"min=-20"`
@@ -271,7 +272,6 @@ func TestMinValueUintNegative(t *testing.T) {
 }
 
 // Floats
-
 func TestMinValueFloat32(t *testing.T) {
 	type minValueTestType struct {
 		Value float32 `validation:"min=20"`
@@ -529,7 +529,6 @@ func TestMaxValueUintNegative(t *testing.T) {
 }
 
 // Floats
-
 func TestMaxValueFloat32(t *testing.T) {
 	type maxValueTestType struct {
 		Value float32 `validation:"max=-20"`
