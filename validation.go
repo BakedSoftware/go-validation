@@ -57,9 +57,9 @@ func (v *Validation) Validate(value interface{}, obj reflect.Value) *ValidationE
 	}
 }
 
-// DefaultValidationMap is the default validation
+// DefaultMap is the default validation
 // map used to tell if a struct is valid.
-var DefaultValidationMap = Map{}
+var DefaultMap = Map{}
 
 // Map is an atomic validation map
 // when two Set happen at the same time,
@@ -85,7 +85,7 @@ func (vm *Map) set(k reflect.Type, v []Interface) {
 // last one will become the validation for that key
 // using DefaultValidationMap.
 func AddValidation(key string, fn func(string, reflect.Kind) (Interface, error)) {
-	DefaultValidationMap.AddValidation(key, fn)
+	DefaultMap.AddValidation(key, fn)
 }
 
 // AddValidation registers the validation specified by key to the known
@@ -98,7 +98,7 @@ func (vm *Map) AddValidation(key string, fn func(string, reflect.Kind) (Interfac
 // IsValid determines if an object is valid based on its validation tags
 // using DefaultValidationMap.
 func IsValid(object interface{}) (bool, []ValidationError) {
-	return DefaultValidationMap.IsValid(object)
+	return DefaultMap.IsValid(object)
 }
 
 // IsValid determines if an object is valid based on its validation tags.
