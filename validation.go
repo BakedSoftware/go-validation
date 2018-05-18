@@ -6,6 +6,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"sync"
 )
 
 // Interface specifies the necessary methods a validation must
@@ -56,32 +57,55 @@ func (v *Validation) Validate(value interface{}, obj reflect.Value) *ValidationE
 	}
 }
 
-var validationMap map[reflect.Type][]Interface
-var validationNameToBuilder map[string]func(string, reflect.Kind) (Interface, error)
+// DefaultValidationMap is the default validation
+// map used to tell if a struct is valid.
+var DefaultValidationMap = ValidationMap{}
 
-func prepareMap() {
-	if validationNameToBuilder == nil {
-		validationNameToBuilder = make(map[string]func(string, reflect.Kind) (Interface, error))
-	}
+// ValidationMap is an atomic validation map
+// when two Set happen at the same time,
+// latest that started wins.
+type ValidationMap struct {
+	validator               sync.Map // map[reflect.Type][]Interface
+	validationNameToBuilder sync.Map // map[string]func(string, reflect.Kind) (Interface, error)
 }
 
-func init() {
-	validationMap = make(map[reflect.Type][]Interface, 10)
+func (vm *ValidationMap) Get(k reflect.Type) []Interface {
+	v, ok := vm.validator.Load(k)
+	if !ok {
+		return []Interface{}
+	}
+	return v.([]Interface)
+}
+func (vm *ValidationMap) Set(k reflect.Type, v []Interface) {
+	vm.validator.Store(k, v)
 }
 
 // AddValidation registers the validation specified by key to the known
 // validations. If more than one validation registers with the same key, the
 // last one will become the validation for that key
+// using DefaultValidationMap.
 func AddValidation(key string, fn func(string, reflect.Kind) (Interface, error)) {
-	prepareMap()
-	validationNameToBuilder[key] = fn
+	DefaultValidationMap.AddValidation(key, fn)
+}
+
+// AddValidation registers the validation specified by key to the known
+// validations. If more than one validation registers with the same key, the
+// last one will become the validation for that key.
+func (vm *ValidationMap) AddValidation(key string, fn func(string, reflect.Kind) (Interface, error)) {
+	vm.validationNameToBuilder.Store(key, fn)
 }
 
 // IsValid determines if an object is valid based on its validation tags
+// using DefaultValidationMap.
 func IsValid(object interface{}) (bool, []ValidationError) {
+	return DefaultValidationMap.IsValid(object)
+}
+
+// IsValid determines if an object is valid based on its validation tags.
+func (vm *ValidationMap) IsValid(object interface{}) (bool, []ValidationError) {
 	objectValue := reflect.ValueOf(object)
 	objectType := reflect.TypeOf(object)
-	validations := validationMap[objectType]
+	validations := vm.Get(objectType)
 	if objectValue.Kind() == reflect.Ptr && !objectValue.IsNil() {
 		return IsValid(objectValue.Elem().Interface())
 	}
@@ -98,8 +122,9 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 						log.Fatalln("Invalid Validation Specification:", objectType.Name(), field.Name, v)
 					}
 					var validation Interface
-					if builder := validationNameToBuilder[comps[0]]; builder != nil {
-						validation, err = builder(comps[1], field.Type.Kind())
+					if builder, ok := vm.validationNameToBuilder.Load(comps[0]); ok && builder != nil {
+						fn := builder.(func(string, reflect.Kind) (Interface, error))
+						validation, err = fn(comps[1], field.Type.Kind())
 					} else {
 						log.Fatalln("Unknown validation named", comps[0])
 					}
@@ -112,7 +137,7 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 				}
 			}
 		}
-		validationMap[objectType] = validations
+		vm.Set(objectType, validations)
 	}
 
 	var errors []ValidationError
@@ -125,5 +150,4 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 	}
 
 	return len(errors) == 0, errors
-
 }
