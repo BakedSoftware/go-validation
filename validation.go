@@ -59,24 +59,24 @@ func (v *Validation) Validate(value interface{}, obj reflect.Value) *ValidationE
 
 // DefaultValidationMap is the default validation
 // map used to tell if a struct is valid.
-var DefaultValidationMap = ValidationMap{}
+var DefaultValidationMap = Map{}
 
-// ValidationMap is an atomic validation map
+// Map is an atomic validation map
 // when two Set happen at the same time,
 // latest that started wins.
-type ValidationMap struct {
+type Map struct {
 	validator               sync.Map // map[reflect.Type][]Interface
 	validationNameToBuilder sync.Map // map[string]func(string, reflect.Kind) (Interface, error)
 }
 
-func (vm *ValidationMap) Get(k reflect.Type) []Interface {
+func (vm *Map) get(k reflect.Type) []Interface {
 	v, ok := vm.validator.Load(k)
 	if !ok {
 		return []Interface{}
 	}
 	return v.([]Interface)
 }
-func (vm *ValidationMap) Set(k reflect.Type, v []Interface) {
+func (vm *Map) set(k reflect.Type, v []Interface) {
 	vm.validator.Store(k, v)
 }
 
@@ -91,7 +91,7 @@ func AddValidation(key string, fn func(string, reflect.Kind) (Interface, error))
 // AddValidation registers the validation specified by key to the known
 // validations. If more than one validation registers with the same key, the
 // last one will become the validation for that key.
-func (vm *ValidationMap) AddValidation(key string, fn func(string, reflect.Kind) (Interface, error)) {
+func (vm *Map) AddValidation(key string, fn func(string, reflect.Kind) (Interface, error)) {
 	vm.validationNameToBuilder.Store(key, fn)
 }
 
@@ -102,10 +102,10 @@ func IsValid(object interface{}) (bool, []ValidationError) {
 }
 
 // IsValid determines if an object is valid based on its validation tags.
-func (vm *ValidationMap) IsValid(object interface{}) (bool, []ValidationError) {
+func (vm *Map) IsValid(object interface{}) (bool, []ValidationError) {
 	objectValue := reflect.ValueOf(object)
 	objectType := reflect.TypeOf(object)
-	validations := vm.Get(objectType)
+	validations := vm.get(objectType)
 	if objectValue.Kind() == reflect.Ptr && !objectValue.IsNil() {
 		return IsValid(objectValue.Elem().Interface())
 	}
@@ -137,7 +137,7 @@ func (vm *ValidationMap) IsValid(object interface{}) (bool, []ValidationError) {
 				}
 			}
 		}
-		vm.Set(objectType, validations)
+		vm.set(objectType, validations)
 	}
 
 	var errors []ValidationError

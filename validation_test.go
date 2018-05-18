@@ -7,7 +7,7 @@ import (
 )
 
 func TestValidationMap_Atomicity(t *testing.T) {
-	vm := ValidationMap{}
+	vm := Map{}
 	typ := reflect.TypeOf(vm)
 	wg1 := sync.WaitGroup{}
 	wg1.Add(1)
@@ -17,14 +17,14 @@ func TestValidationMap_Atomicity(t *testing.T) {
 	go func() {
 		wg1.Wait()
 		for i := 0; i < count; i++ {
-			vm.Set(typ, nil)
+			vm.set(typ, nil)
 		}
 		wg2.Done()
 	}()
 	go func() {
 		wg1.Wait()
 		for i := 0; i < count; i++ {
-			vm.Get(typ)
+			vm.get(typ)
 		}
 		wg2.Done()
 	}()
